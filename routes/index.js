@@ -83,6 +83,19 @@ router.post('/login', function(req, res, next) {
   }
 });
 
+// GET /log-out
+router.get('/log-out', function(req, res, next) {
+  if (req.session) { // check to see if session exists
+    req.session.destroy(function(err) { // if so, destroy the session
+      if (err) {
+        return next(err);
+      } else {
+        return res.redirect('/'); // and redirect to the site's homepage
+      }
+    });
+  }
+});
+
 // Get /profile
 
 router.get('/profile', function(req, res, next) {
