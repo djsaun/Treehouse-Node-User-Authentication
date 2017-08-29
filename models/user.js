@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const UserSchema = new mongoose.schema({
+const bcrypt = require('bcrypt');
+const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -20,6 +21,18 @@ const UserSchema = new mongoose.schema({
     type: String,
     required: true
   }
+});
+
+// use mongoose pre-save hook to hash password
+UserSchema.pre('save', function(next) {
+  const user = this;
+  bcrypt.hash(user.password, 10, function(err, hash) {
+    if (err) {
+      return next(err);
+    }
+    user.password = hash; // overwrite plain text password with hashed password
+    next();
+  });
 });
 
 const User = mongoose.model('User', UserSchema);
