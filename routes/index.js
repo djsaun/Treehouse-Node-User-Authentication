@@ -46,6 +46,7 @@ router.post('/register', function(req, res, next) {
       if (error) {
         return next(error);
       } else {
+        req.session.userId = user._id; // Automatically log in the user after registering
         return res.redirect('/profile');
       }
     });
@@ -64,7 +65,41 @@ router.get('/login', function(req, res, next) {
 
 // POST /login
 router.post('/login', function(req, res, next) {
-  return res.send('Logged In');
+  if (req.body.email && req.body.password) {
+    User.authenticate(req.body.email, req.body.password, function(error, user) {
+      if (error | !user) { // If error or no user
+        let err = new Error("Wrong email or password.");
+        err.status = 401;
+        return next(err);
+      } else {
+        req.session.userId = user._id; // Assigning a value to a req session tells Express to update an existing session or create a new session
+        return res.redirect('/profile');
+      }
+    });
+  } else {
+    let err = new Error('Email and password are required.');
+    err.status = 401;
+    return next(err);
+  }
+});
+
+// Get /profile
+
+router.get('/profile', function(req, res, next) {
+  if (!req.session.userId) { // Check if session user id exists, if not, don't allow access to page and throw error
+    let err = new Error("You must be logged in to view this page.");
+    err.status = 403;
+    return next(err);
+  }
+
+  User.findById(req.session.userId)  // If session user id exists, find the user by the user id stored in the session
+      .exec(function(error, user) {
+        if (error) {
+          return next(error);
+        } else { // render profile page pulling in name and favorite book values
+          return res.render('profile', { title: 'Profile', name: user.name, favorite: user.favoriteBook });
+        }
+      });
 });
 
 module.exports = router;
