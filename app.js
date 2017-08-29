@@ -11,6 +11,12 @@ app.use(session({
   saveUninitialized: false // forces an uninitialized session to be saved in the session store
 }));
 
+// make user ID available in templates
+app.use(function(req, res, next) {
+  res.locals.currentUser = req.session.userId; // If user id is stored in session, currentUser will equal that number, otherwise, currentUser will be undefined
+  next();
+});
+
 // connect to mongodb
 mongoose.connect("mongodb://localhost:27017/bookworm");
 const db = mongoose.connection;
