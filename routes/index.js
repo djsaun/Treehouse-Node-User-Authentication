@@ -16,4 +16,14 @@ router.get('/contact', function(req, res, next) {
   return res.render('contact', { title: 'Contact' });
 });
 
+// GET /register - Sign up form
+router.get('/register', function(req, res, next) {
+  return res.render('register', { title: 'Register' });
+});
+
+// POST /register - to add sign up data to database
+router.post('/register', function(req, res, next) {
+  return res.send('User created');
+});
+
 module.exports = router;
