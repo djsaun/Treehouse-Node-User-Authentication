@@ -49,12 +49,22 @@ router.post('/register', function(req, res, next) {
         return res.redirect('/profile');
       }
     });
-    
+
   } else {
     let err = new Error('All fields required.');
     err.status = 400;
     return next(err);
   }
+});
+
+// GET /login
+router.get('/login', function(req, res, next) {
+  return res.render('login', { title: 'Login' });
+});
+
+// POST /login
+router.post('/login', function(req, res, next) {
+  return res.send('Logged In');
 });
 
 module.exports = router;
