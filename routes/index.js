@@ -100,12 +100,6 @@ router.get('/log-out', function(req, res, next) {
 // Get /profile
 
 router.get('/profile', mid.requiresLogin, function(req, res, next) {
-  if (!req.session.userId) { // Check if session user id exists, if not, don't allow access to page and throw error
-    let err = new Error("You must be logged in to view this page.");
-    err.status = 403;
-    return next(err);
-  }
-
   User.findById(req.session.userId)  // If session user id exists, find the user by the user id stored in the session
       .exec(function(error, user) {
         if (error) {
